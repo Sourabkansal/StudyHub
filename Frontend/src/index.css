@@ -1,1 +1,61 @@
 @import "tailwindcss";
+/* 🌟 Custom styles for react-calendar */
+
+.react-calendar {
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.react-calendar__navigation button {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.react-calendar__tile {
+  padding: 1rem 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.react-calendar__tile--now {
+  background: #e0f2fe;
+  border-radius: 8px;
+}
+
+.react-calendar__tile--active {
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+}
+
+.react-calendar__tile:enabled:hover {
+  background: #bfdbfe;
+  color: black;
+}
+
+/* Custom compact calendar style */
+.calendar-sm .react-calendar__tile {
+  padding: 0.5rem 0.2rem; /* reduce height of tiles */
+  font-size: 0.75rem;     /* reduce text size */
+}
+
+.calendar-sm .react-calendar__navigation {
+  margin-bottom: 0.5rem;
+}
+
+.calendar-sm .react-calendar__navigation button {
+  font-size: 0.75rem;
+  padding: 0.25rem;
+}
+
+.calendar-sm {
+  padding: 0.5rem;
+}
+
+

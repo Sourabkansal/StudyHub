@@ -22,7 +22,7 @@ const signup = () => {
 
   const onSubmit = async (data) => {
     console.log(data)
-    let response = await fetch("http://localhost:5000/signup", {
+    let response = await fetch("http://localhost:5000/auth/signup", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -59,7 +59,7 @@ const signup = () => {
 
   async function sendotpp() {
     setIssendingOtp(true)
-    let response = await fetch("http://localhost:5000/getotp",{
+    let response = await fetch("http://localhost:5000/auth/getotp",{
          method:"POST",
          headers:{
           "Content-type": "application/json",
@@ -216,6 +216,12 @@ const signup = () => {
         Continue with Google
       </Button>
     </div>
+    <p className="mt-6 text-sm text-center text-blue-600">
+              Already have an account?{" "}
+              <NavLink to="/login" className="font-semibold text-blue-800 underline">
+                Sign in
+              </NavLink>
+            </p>
   </div>
 </div>
 

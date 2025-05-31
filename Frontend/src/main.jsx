@@ -1,9 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import Signup from './component/signup.jsx'
-import Login from './component/login.jsx'
+
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
+import Signup from "./component/signup.jsx";
+import Login from "./component/login.jsx";
+import Home from "./component/home.jsx";
 
 import {
   Route,
@@ -15,27 +16,16 @@ import {
 
 let routerr = createBrowserRouter(
   createRoutesFromElements(
-      <Route>
-            <Route 
-             path='/'
-             element={<App/>}
-             />
-              <Route 
-             path='/Signup'
-             element={<Signup/>}
-             />
-              <Route 
-             path='/login'
-             element={<Login/>}
-             />
-
-
+    <Route>
+      <Route path="/" element={<App />} >
+      <Route path="" element={<Home />} />
       </Route>
+      <Route path="/Signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+    </Route>
   )
-)
+);
 
-
-createRoot(document.getElementById('root')).render(
-
-   <RouterProvider router={routerr} />
-)
+createRoot(document.getElementById("root")).render(
+  <RouterProvider router={routerr} />
+);
