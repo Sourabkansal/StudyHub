@@ -25,7 +25,7 @@ export const getOTP = async (req, res) => {
     from: process.env.EMAIL,
     to: email,
     subject: "One Time Password (OTP)",
-    html: `<p>Please use <strong>OTP : ${otp}</strong> to verify your Shopz account.</p>
+    html: `<p>Please use <strong>OTP : ${otp}</strong> to verify your StudyHub account.</p>
          <p>If you're facing any problem, just reply to this email.</p>
          <p>Thank you,<br><strong>Sourab Kansal</strong></p>`,
   };

@@ -13,7 +13,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
         method: "POST",
         credentials : "include",
         headers: {
@@ -23,12 +23,13 @@ const Login = () => {
       });
 
       const resData = await response.json();
-
+      
       if (!response.ok) {
         toast.error(resData.message || "Login failed");
       } else {
         toast.success("Login successful");
-        console.log(resData)        
+        console.log(resData)      
+        localStorage.setItem("user",JSON.stringify(resData))
         setTimeout(() => {
           navigate("/");
         }, 2000);

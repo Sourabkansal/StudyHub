@@ -6,9 +6,10 @@ import { User } from "./DbModels/userModel.js";
 import {OTP} from "./DbModels/otpModel.js"
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
-
 import signupRoute from "./Routes/signup.route.js";
-
+import ScheduleStudy from "./Routes/ScheduleStudy.js";
+import authenticateUser from "./Middleware/authenticateUser.js"
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
@@ -19,80 +20,14 @@ app.use(cors({
 }));
 
 condb();
+app.use(cookieParser()); 
 
 app.get("/",async(req ,res)=>{
   res.send("api running...");
 })
 
-// app.post("/signup", async (req, res) => {
-//   let { username, email, password, otp } = req.body;
-//   // console.log(req.body)
-//   let usertocheck = await User.findOne({
-//     $or: [{ username }, { email }],
-//   });
-//   console.log(usertocheck);
-//   if (usertocheck) {
-//     if (usertocheck.username == username) {
-//       res.status(402).json({ message: "Username already registered" });
-//     } else if (usertocheck.email == email) {
-//       res.status(403).json({ message: "email already registered" });
-//     }
-//   } else {
-//     let hashedpas = await bcrypt.hash(password, 10);
-//     console.log(hashedpas);
-//     let otpobj = await OTP.findOne({ email });
-//     if (!otpobj || otpobj.otp != otp) {
-//       res.status(401).send({ message: "incorrect credentials !" });
-//       return;
-//     }
-//     let user = await User({ username, email, hashedpas });
-//     user.save();
-//     res.status(201).json({ message: "Signup success" });
-//   }
-// });
-
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-
-// app.post("/getotp", async (req, res) => {
-//   let otp = Math.floor(1000 + Math.random() * 9000);
-//   let { email } = req.body;
-//   if (!email) {
-//     res.status(400).send({ message: "email is required!" });
-//     return;
-//   }
-
-//   const mailOptions = {
-//     from: process.env.EMAIL,
-//     to: email,
-//     subject: "One Time Password (OTP)",
-//     html: `<p>Please use <strong>OTP : ${otp}</strong> to verify your Shopz account.</p>
-//          <p>If you're facing any problem, just reply to this email.</p>
-//          <p>Thank you,<br><strong>Sourab Kansal</strong></p>`,
-//   };
-//   let otpp = await OTP.findOneAndUpdate(
-//     { email },
-//     { email, otp },
-//     { upsert: true, new: true }
-//   );
-//   console.log(otpp);
-//   transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//       res.status(401).send({ message: " Enter valid Email" });
-//       console.error("Error sending email:", error); 
-//     } else {
-//       res.status(200).send({ message: "otp send to email succeessfulllyyyy....." });
-//       console.log("Email sent:", info.response);
-//     }
-//   });
-// });
-
 app.use("/auth" , signupRoute )
+app.use("/Schedule" , authenticateUser, ScheduleStudy )
 
 app.listen((5000),()=>{
     
