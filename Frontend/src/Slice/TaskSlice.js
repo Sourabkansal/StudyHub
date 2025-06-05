@@ -19,9 +19,9 @@ export const TaskSlice =  createSlice({
      },
      isDonee : (state , action)=>{
             let id = action.payload 
-            state.value = state.value.filter((item)=>{
+            state.value = state.value.map((item)=>{
               console.log(item)
-                  //  return item._id==id ? {...item , isDone : !item.isDone } : item
+                   return item._id==id ? {...item , isDone : !item.isDone } : item
             })
      }
      }

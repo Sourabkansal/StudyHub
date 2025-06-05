@@ -112,7 +112,7 @@ let isDone = async(id)=>{
   setfiltered(prev => prev.map((item)=>{
        return item._id==id ? {...item , isDone : !item.isDone } : item
   }))
-  // dispatch(isDonee(id))
+  dispatch(isDonee(id))
   console.log(filteredata)
 }
 
