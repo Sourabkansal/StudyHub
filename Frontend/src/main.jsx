@@ -5,6 +5,7 @@ import Signup from "./component/signup.jsx";
 import Login from "./component/login.jsx";
 import Home from "./component/home.jsx";
 import ScheduleStudy from "./component/ScheduleStudy/ScheduleStudy.jsx";
+import AiSchedule from "./component/AiSchedule/AiSchedule.jsx";
 
 import {
   Route,
@@ -38,6 +39,13 @@ let routerr = createBrowserRouter(
             <ScheduleStudy />
           </ProtectedRoute>
           } />
+      <Route path="/AiSchedule" element={
+        <ProtectedRoute>
+          <AiSchedule/>
+        </ProtectedRoute>
+        
+        }/>
+
       </Route>
       <Route path="/Signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
