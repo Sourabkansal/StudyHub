@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { GettaskToDo } from "../Slice/TaskSlice";
 import { useForm } from "react-hook-form";
 import { RepostCharts } from "./charts/RepostCharts";
+import ChatBot from "./ChatBot";
 
 const Home = () => {
   const [date, setDate] = useState(new Date());
@@ -209,6 +210,7 @@ const Home = () => {
           </div>
           <div className="bg-white px-4 py-2 rounded-lg shadow w-full sm:w-auto">
             ⏳ Pomodoro Timer
+            <ChatBot/>
           </div>
         </div>
       </div>
