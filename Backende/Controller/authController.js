@@ -154,7 +154,10 @@ export const login = async (req, res) => {
     return;
   }
 
-  const latestWeek = user.weeklyData[user.weeklyData.length - 1]; // lastweek nikal rha hu db sa
+const latestWeek = user.weeklyData?.length > 0 
+  ? user.weeklyData[user.weeklyData.length - 1]
+  : null; 
+  
   console.log(` last week ${latestWeek}`)
   console.log(` current week  ${currentLabel}`)
   if (!latestWeek || latestWeek.weekLabel !== currentLabel) {
