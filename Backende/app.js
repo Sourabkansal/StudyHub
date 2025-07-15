@@ -12,8 +12,9 @@ import charts from "./Routes/Charts.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
+console.log(process.env.FRONTEND_URL);
 app.use(cors({
-   origin:"*",
+   origin:process.env.FRONTEND_URL,
    credentials:true
 }));
 
