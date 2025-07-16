@@ -12,10 +12,9 @@ import charts from "./Routes/Charts.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
-console.log(process.env.FRONTEND_URL);
 app.use(cors({
-   origin:process.env.FRONTEND_URL,
-   credentials:true
+  origin: process.env.FRONTEND_URL || "https://study-hub-dqql.vercel.app",
+  credentials:true
 }));
 
 condb();
@@ -31,5 +30,6 @@ app.use("/AiSchedul",authenticateUser , AiSchedull)
 app.use("/Charts",authenticateUser , charts)
 
 app.listen((5000),()=>{
+  console.log(process.env.FRONTEND_URL);
     console.log("Server is running on port 5000");
 })
