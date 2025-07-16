@@ -25,9 +25,9 @@ app.get("/",async(req ,res)=>{
 })
 
 app.use("/auth" , signupRoute )
-app.use("/Schedule" , authenticateUser, ScheduleStudy )
-app.use("/AiSchedul",authenticateUser , AiSchedull)
-app.use("/Charts",authenticateUser , charts)
+app.use("/Schedule" ,  ScheduleStudy )
+app.use("/AiSchedul", AiSchedull)
+app.use("/Charts" , charts)
 
 app.listen((5000),()=>{
   console.log(process.env.FRONTEND_URL);
