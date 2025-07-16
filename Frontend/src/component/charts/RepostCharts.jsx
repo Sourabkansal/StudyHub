@@ -199,7 +199,7 @@ export const RepostCharts = () => {
           <div className="my-2 sm:my-4 text-center lg:text-left">
             <p className="text-lg font-medium text-gray-800">
               <span className="font-bold text-indigo-600">Streak: </span>
-              <span className="font-bold text-orange-500">7</span>
+              <span className="font-bold text-orange-500">1</span>
               <span className="ml-1 text-xl">🔥</span>
             </p>
           </div>
