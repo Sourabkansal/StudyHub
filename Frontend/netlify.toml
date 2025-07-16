@@ -1,19 +1,4 @@
-[build]
-  # Directory to deploy (e.g., "build" for React, "dist" for Vue)
-  publish = "build"
-  # Command to build your project
-  command = "npm run build"
-
-[dev]
-  # If you use Netlify CLI `netlify dev`
-  framework = "create-react-app"
-
-[build.environment]
-  # Example: Set Node version or environment variables
-  NODE_VERSION = "18"
-
 [[redirects]]
-  # Example: Redirect all requests to index.html (for SPAs)
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200 
