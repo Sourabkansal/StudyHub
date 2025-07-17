@@ -12,9 +12,12 @@ import charts from "./Routes/Charts.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://study-hub-dqql.vercel.app",
-  credentials:true
+  origin: process.env.FRONTEND_URL || "https://studyhub2.netlify.app",
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 condb();
