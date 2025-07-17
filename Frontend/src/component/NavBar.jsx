@@ -24,7 +24,17 @@ const StudyHubNavbar = () => {
     };
   }, []);
 
-  let userdata = JSON.parse(localStorage.getItem("user"));
+  let userdata = null;
+  try {
+    userdata = JSON.parse(localStorage.getItem("user"));
+  } catch (error) {
+    console.error("Error parsing user data:", error);
+  }
+
+  // If no user data, don't render the navbar
+  if (!userdata) {
+    return null;
+  }
   
   const getRandomColor = () => {
     const colors = [
@@ -36,7 +46,7 @@ const StudyHubNavbar = () => {
   };
 
   const avatarColor = getRandomColor();
-  const firstLetter = userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U';
+  const firstLetter = userdata?.username ? userdata.username.charAt(0).toUpperCase() : 'U';
   
   const logout = async () => {
     try {
@@ -71,8 +81,8 @@ const StudyHubNavbar = () => {
               <span className="text-white font-semibold text-sm">{firstLetter}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-800 font-medium text-sm">{userdata.username}</span>
-              <span className="text-gray-500 text-xs">{userdata.email}</span>
+              <span className="text-gray-800 font-medium text-sm">{userdata?.username || 'User'}</span>
+              <span className="text-gray-500 text-xs">{userdata?.email || 'user@example.com'}</span>
             </div>
             <ChevronDown 
               size={16} 
@@ -94,8 +104,8 @@ const StudyHubNavbar = () => {
                     <span className="text-white font-semibold text-sm">{firstLetter}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-gray-800 font-medium text-sm">{userdata.username}</span>
-                    <span className="text-gray-500 text-xs">{userdata.email}</span>
+                    <span className="text-gray-800 font-medium text-sm">{userdata?.username || 'User'}</span>
+                    <span className="text-gray-500 text-xs">{userdata?.email || 'user@example.com'}</span>
                   </div>
                 </div>
               </div>
@@ -147,8 +157,8 @@ const StudyHubNavbar = () => {
                   <span className="text-white font-semibold text-sm">{firstLetter}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-gray-800 font-medium text-sm">{userdata.username}</span>
-                  <span className="text-gray-500 text-xs">{userdata.email}</span>
+                  <span className="text-gray-800 font-medium text-sm">{userdata?.username || 'User'}</span>
+                  <span className="text-gray-500 text-xs">{userdata?.email || 'user@example.com'}</span>
                 </div>
               </div>
               <ChevronDown 
