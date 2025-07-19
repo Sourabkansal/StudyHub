@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 import createTokenSetcookie from "../setJwdToken.js";
 
 export const getOTP = async (req, res) => {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.EMAIL,
@@ -140,81 +140,66 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  try {
-    let { email, password } = req.body;
-    const { monday, sunday } = getcurrentweekdata();
-    const currentLabel = getWeekLabel();
-    
-    let user = await User.findOne({ email: email });
-    if (!user) {
-      res.status(404).send({ message: "user not find " });
-      return;
-    }
-    
-    let matched = await bcrypt.compare(password, user.hashedpas);
-    if (!matched) {
-      res.status(401).send({ message: "wront password!" });
-      return;
-    }
+  let { email, password } = req.body;
+  const { monday, sunday } = getcurrentweekdata();
+  const currentLabel = getWeekLabel();
+  let user = await User.findOne({ email: email });
+  if (!user) {
+    res.status(404).send({ message: "user not find " });
+    return;
+  }
+  let matched = await bcrypt.compare(password, user.hashedpas);
+  if (!matched) {
+    res.status(401).send({ message: "wront password!" });
+    return;
+  }
 
-    // CRITICAL iOS FIX: Safe array access with proper null checking
-    if (!user.weeklyData || !Array.isArray(user.weeklyData)) {
-      user.weeklyData = [];
-    }
-
-    const latestWeek = user.weeklyData.length > 0 
-      ? user.weeklyData[user.weeklyData.length - 1] 
-      : null;
-      
-    console.log(`last week ${latestWeek}`);
-    console.log(`current week ${currentLabel}`);
-    
-    if (!latestWeek || latestWeek.weekLabel !== currentLabel) {
-      // yaha ajj bala sa compare
-      const dayNames = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ];
-      const days = [];
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(monday);
-        date.setDate(monday.getDate() + i);
-        days.push({
-          date,
-          dayName: dayNames[i],
-          activityDone: false,
-          learningHours: 0,
-          readingHours: 0,
-        });
-      }
-      user.weeklyData.push({
-        weekLabel: currentLabel,
-        startDate: monday,
-        endDate: sunday,
-        daysCompleted: 0,
-        days,
+  const latestWeek = user.weeklyData[user.weeklyData.length - 1]; // lastweek nikal rha hu db sa
+  console.log(` last week ${latestWeek}`)
+  console.log(` current week  ${currentLabel}`)
+  if (!latestWeek || latestWeek.weekLabel !== currentLabel) {
+    // yaha ajj bala sa compare
+    const dayNames = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      days.push({
+        date,
+        dayName: dayNames[i],
+        activityDone: false,
+        learningHours: 0,
+        readingHours: 0,
       });
-      await user.save();
     }
+    user.weeklyData.push({
+      weekLabel: currentLabel,
+      startDate: monday,
+      endDate: sunday,
+      daysCompleted: 0,
+      days,
+    });
+     await user.save();
+  }
 
     createTokenSetcookie(res, user._id);
-    
-    // Fix the response object handling
-    const userResponse = user.toObject();
-    delete userResponse.hashedpas;
-    
-    res.status(200).send({
-      message: "Log in success ",
-      user: userResponse
-    });
-    
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).send({ message: "Internal server error" });
-  }
+    res
+      .status(200)
+      .send(
+        {
+          message: "Log in success ",
+          user: delete (user = user.toObject()).hashedpas,
+        }
+          ? user
+          : ""
+      );
+  
 };
