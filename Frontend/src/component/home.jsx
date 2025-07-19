@@ -51,37 +51,62 @@ const Home = () => {
           }
         );
         const data = await response.json();
-        dispatch(GettaskToDo(data.taskData));
+        // CRITICAL iOS FIX: Ensure taskData is always an array
+        const taskData = data?.taskData || [];
+        dispatch(GettaskToDo(taskData));
       } catch (error) {
         console.error("Fetch error:", error);
+        // Dispatch empty array on error
+        dispatch(GettaskToDo([]));
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
-  const tasks = useSelector((state) => state.taskToDo.value);
+  // CRITICAL iOS FIX: Ensure tasks is always an array
+  const tasks = useSelector((state) => state.taskToDo.value) || [];
 
   useEffect(() => {
-    if (!selectedDate || tasks.length === 0) return;
+    // CRITICAL iOS FIX: Comprehensive null checking for arrays
+    if (!selectedDate || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
+      setfiltered([]);
+      return;
+    }
+    
     const filtered = tasks.filter((item) => {
-      return item.date.toString().slice(0, 11) === selectedDate;
+      // Additional safety checks for item properties
+      if (!item || !item.date) return false;
+      
+      try {
+        return item.date.toString().slice(0, 11) === selectedDate;
+      } catch (error) {
+        console.error("Error filtering task:", error);
+        return false;
+      }
     });
     setfiltered(filtered);
   }, [selectedDate, tasks]);
 
   let isDone = async (id) => {
-    let response = await fetch(
-      `${import.meta.env.VITE_API_URL}/Schedule/isDone/${id}`,
-      {
-        credentials: "include",
-      }
-    );
-    let data = await response.json();
-    setfiltered((prev) =>
-      prev.map((item) =>
-        item._id == id ? { ...item, isDone: !item.isDone } : item
-      )
-    );
+    try {
+      let response = await fetch(
+        `${import.meta.env.VITE_API_URL}/Schedule/isDone/${id}`,
+        {
+          credentials: "include",
+        }
+      );
+      let data = await response.json();
+      
+      // CRITICAL iOS FIX: Safe state update with array checks
+      setfiltered((prev) => {
+        if (!Array.isArray(prev)) return [];
+        return prev.map((item) =>
+          item && item._id === id ? { ...item, isDone: !item.isDone } : item
+        );
+      });
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
   };
 
   return (
@@ -105,34 +130,40 @@ const Home = () => {
                   + Add Task
                 </button>
               </div>
-              {filteredata.map((item) => (
-                <div key={item._id}>
-                  <div className="flex justify-between px-2 sm:px-4 items-center">
-                    <div className="flex gap-2 sm:gap-4 items-center">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600">
-                        {item.Time}
-                      </p>
-                      <h4
-                        className={`text-xs sm:text-sm font-semibold w-[100px] overflow-hidden overflow-ellipsis whitespace-nowrap ${
-                          item.isDone ? "line-through text-black" : ""
-                        }`}
-                        style={
-                          item.isDone ? { textDecorationColor: "red" } : {}
-                        }
+              {/* CRITICAL iOS FIX: Safe array mapping with additional checks */}
+              {Array.isArray(filteredata) && filteredata.length > 0 && filteredata.map((item) => {
+                // Additional safety check for each item
+                if (!item || !item._id) return null;
+                
+                return (
+                  <div key={item._id}>
+                    <div className="flex justify-between px-2 sm:px-4 items-center">
+                      <div className="flex gap-2 sm:gap-4 items-center">
+                        <p className="text-xs sm:text-sm font-medium text-gray-600">
+                          {item.Time || 'N/A'}
+                        </p>
+                        <h4
+                          className={`text-xs sm:text-sm font-semibold w-[100px] overflow-hidden overflow-ellipsis whitespace-nowrap ${
+                            item.isDone ? "line-through text-black" : ""
+                          }`}
+                          style={
+                            item.isDone ? { textDecorationColor: "red" } : {}
+                          }
+                        >
+                          {item.Task || 'No Task'}
+                        </h4>
+                      </div>
+                      <button
+                        onClick={() => isDone(item._id)}
+                        className="text-xs sm:text-sm px-3 py-1 text-white rounded-full bg-gradient-to-br from-[#00c6ff] to-[#0072ff] shadow hover:-translate-y-1 transition-all"
                       >
-                        {item.Task}
-                      </h4>
+                        Done
+                      </button>
                     </div>
-                    <button
-                      onClick={() => isDone(item._id)}
-                      className="text-xs sm:text-sm px-3 py-1 text-white rounded-full bg-gradient-to-br from-[#00c6ff] to-[#0072ff] shadow hover:-translate-y-1 transition-all"
-                    >
-                      Done
-                    </button>
+                    <div className="h-[1px] bg-gray-300 w-full my-1"></div>
                   </div>
-                  <div className="h-[1px] bg-gray-300 w-full my-1"></div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

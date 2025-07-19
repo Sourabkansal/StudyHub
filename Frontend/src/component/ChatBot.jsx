@@ -37,6 +37,12 @@ const StudyHubChatBot = () => {
   }, [messages]);
 
   const handleSend = async (messageText) => {
+    // CRITICAL iOS FIX: Add input validation
+    if (!messageText || typeof messageText !== 'string') {
+      console.error('Invalid message text');
+      return;
+    }
+
     const userMessage = {
       message: messageText,
       sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -46,7 +52,11 @@ const StudyHubChatBot = () => {
       avatar: USER_AVATAR
     };
     
-    setMessages(prev => [...prev, userMessage]);
+    // CRITICAL iOS FIX: Safe state update with array validation
+    setMessages(prev => {
+      if (!Array.isArray(prev)) return [userMessage];
+      return [...prev, userMessage];
+    });
     setIsTyping(true);
 
     try {
@@ -61,22 +71,36 @@ const StudyHubChatBot = () => {
         avatar: AI_AVATAR
       };
       
-      setMessages(prev => [...prev, aiMessage]);
+      // CRITICAL iOS FIX: Safe state update
+      setMessages(prev => {
+        if (!Array.isArray(prev)) return [aiMessage];
+        return [...prev, aiMessage];
+      });
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages(prev => [...prev, {
+      const errorMessage = {
         message: "Sorry, I'm having trouble responding. Please try again later.",
         sender: "StudyHub",
         direction: "incoming",
         position: "single",
         avatar: AI_AVATAR
-      }]);
+      };
+      
+      setMessages(prev => {
+        if (!Array.isArray(prev)) return [errorMessage];
+        return [...prev, errorMessage];
+      });
     } finally {
       setIsTyping(false);
     }
   };
 
   const getAIResponse = async (message) => {
+    // CRITICAL iOS FIX: Add input validation
+    if (!message || typeof message !== 'string') {
+      throw new Error('Invalid message input');
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const studyResponses = [
@@ -87,7 +111,13 @@ const StudyHubChatBot = () => {
       `Professor's video lectures explain ${message} well.`
     ];
     
-    return studyResponses[Math.floor(Math.random() * studyResponses.length)];
+    // CRITICAL iOS FIX: Safe array access with validation
+    if (!Array.isArray(studyResponses) || studyResponses.length === 0) {
+      return "I'm here to help with your studies!";
+    }
+    
+    const randomIndex = Math.floor(Math.random() * studyResponses.length);
+    return studyResponses[randomIndex] || "I'm here to help with your studies!";
   };
 
   return (
@@ -103,6 +133,9 @@ const StudyHubChatBot = () => {
             src={robotGif} 
             alt="StudyHub Assist" 
             className="w-24 h-24 object-contain"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
           />
           <p className="text-center text-sm font-medium text-blue-600 mt-1">StudyHub Assist</p>
         </div>
@@ -118,6 +151,9 @@ const StudyHubChatBot = () => {
                 src={robotGif} 
                 alt="StudyHub Assist" 
                 className="w-8 h-8 rounded-full mr-2 object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
               />
               <span className="font-semibold">StudyHub Assist</span>
             </div>
@@ -139,19 +175,25 @@ const StudyHubChatBot = () => {
                 <MessageList
                   typingIndicator={isTyping && <TypingIndicator content="Searching study resources..." />}
                 >
-                  {messages.map((msg, index) => (
-                    <Message
-                      key={index}
-                      model={msg}
-                      avatarPosition={msg.sender === "AI" ? "tl" : "tr"}
-                    >
-                      <Avatar src={msg.avatar} />
-                      <Message.Footer 
-                        sentTime={msg.sentTime} 
-                        sender={msg.sender === "AI" ? "StudyHub" : "You"}
-                      />
-                    </Message>
-                  ))}
+                  {/* CRITICAL iOS FIX: Safe array rendering with validation */}
+                  {Array.isArray(messages) && messages.length > 0 && messages.map((msg, index) => {
+                    // Additional safety check for each message
+                    if (!msg || typeof msg !== 'object') return null;
+                    
+                    return (
+                      <Message
+                        key={`message-${index}`}
+                        model={msg}
+                        avatarPosition={msg.sender === "AI" ? "tl" : "tr"}
+                      >
+                        <Avatar src={msg.avatar || AI_AVATAR} />
+                        <Message.Footer 
+                          sentTime={msg.sentTime || 'now'} 
+                          sender={msg.sender === "AI" ? "StudyHub" : "You"}
+                        />
+                      </Message>
+                    );
+                  })}
                 </MessageList>
               </ChatContainer>
             </MainContainer>
